@@ -1,0 +1,53 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.shubham.quicktube.app-mergeDebugResources-18:/values-pt/values-pt.xml",
+            "map": [
+                {
+                    "source": "C:\\Users\\shubh\\.gradle\\caches\\8.9\\transforms\\9a973deba03bf694efaf5ec79bea9189\\transformed\\core-1.9.0\\res\\values-pt\\values-pt.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "100",
+                        "endOffsets": "151"
+                    },
+                    "to": {
+                        "startLines": "8",
+                        "startColumns": "4",
+                        "startOffsets": "718",
+                        "endColumns": "100",
+                        "endOffsets": "814"
+                    }
+                },
+                {
+                    "source": "C:\\Users\\shubh\\.gradle\\caches\\8.9\\transforms\\6e969fe6b1c9728621ad40791f96e839\\transformed\\browser-1.4.0\\res\\values-pt\\values-pt.xml",
+                    "from": {
+                        "startLines": "2,3,4,5",
+                        "startColumns": "4,4,4,4",
+                        "startOffsets": "55,170,269,381",
+                        "endColumns": "114,98,111,105",
+                        "endOffsets": "165,264,376,482"
+                    },
+                    "to": {
+                        "startLines": "4,5,6,7",
+                        "startColumns": "4,4,4,4",
+                        "startOffsets": "286,401,500,612",
+                        "endColumns": "114,98,111,105",
+                        "endOffsets": "396,495,607,713"
+                    }
+                },
+                {
+                    "source": "C:\\Users\\shubh\\.gradle\\caches\\8.9\\transforms\\eb42deb3a28a6e1845c2f04fff0d0c41\\transformed\\jetified-credentials-1.2.0-rc01\\res\\values-pt\\values-pt.xml",
+                    "from": {
+                        "startLines": "2,3",
+                        "startColumns": "4,4",
+                        "startOffsets": "55,164",
+                        "endColumns": "108,121",
+                        "endOffsets": "159,281"
+                    }
+                }
+            ]
+        }
+    ]
+}

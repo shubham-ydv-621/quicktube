@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "796413342495",
+    "project_id": "quicktube-299e2",
+    "storage_bucket": "quicktube-299e2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:796413342495:android:96f6c04e8a6a2bd1daf62a",
+        "android_client_info": {
+          "package_name": "com.shubham.quicktube"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "796413342495-ef786571qtqp0kcvvke9hgk7ikc6s96a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAyY_EabaN7HtbxfhFDCqY5Jn9D3hi7K90"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "796413342495-ef786571qtqp0kcvvke9hgk7ikc6s96a.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
