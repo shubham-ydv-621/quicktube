@@ -11,25 +11,31 @@ class SplashScreen extends StatefulWidget {
   _SplashScreenState createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
   @override
   void initState() {
     super.initState();
+    _controller = AnimationController(
+      duration: Duration(seconds: 2),
+      vsync: this,
+    )..repeat();
     _navigateBasedOnAuth();
   }
 
-  // This function checks the auth state and navigates accordingly
-  void _navigateBasedOnAuth() async {
-    // Show the splash screen for a slightly longer delay (3 seconds)
-    await Future.delayed(Duration(seconds: 3));
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
-    // Wait for Firebase auth to initialize
+  // Navigate based on authentication state
+  void _navigateBasedOnAuth() async {
+    await Future.delayed(Duration(seconds: 3)); // Splash delay
     await FirebaseAuth.instance.authStateChanges().first;
 
-    // Check if user is logged in
     User? user = FirebaseAuth.instance.currentUser;
-
-    // Navigate to the appropriate screen based on the user's auth state
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(builder: (context) => user == null ? AuthScreen() : HomeScreen()),
     );
@@ -41,16 +47,16 @@ class _SplashScreenState extends State<SplashScreen> {
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Colors.purpleAccent, Colors.deepPurple, Colors.pink],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+            colors: [Colors.black, Colors.grey.shade800, Colors.grey.shade900],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
           ),
         ),
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Animated QuickTube Text with a cool glowing effect
+              // Animated App Name with modern typography and glow effect
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: "QuickTube".split("").asMap().entries.map((entry) {
@@ -61,18 +67,18 @@ class _SplashScreenState extends State<SplashScreen> {
                     child: Text(
                       letter,
                       style: GoogleFonts.bebasNeue(
-                        fontSize: 55,
+                        fontSize: 60,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                         shadows: [
                           Shadow(
-                            blurRadius: 15,
-                            color: Colors.purpleAccent.withOpacity(0.8),
+                            blurRadius: 10,
+                            color: Colors.blueAccent.withOpacity(0.7),
                             offset: Offset(0, 0),
                           ),
                           Shadow(
-                            blurRadius: 15,
-                            color: Colors.pink.withOpacity(0.6),
+                            blurRadius: 10,
+                            color: Colors.deepPurpleAccent.withOpacity(0.6),
                             offset: Offset(0, 0),
                           ),
                         ],
@@ -83,24 +89,40 @@ class _SplashScreenState extends State<SplashScreen> {
               ),
               SizedBox(height: 10),
 
-              // Tagline with a smooth fade effect
+              // Modern tagline with gradient text effect
               FadeIn(
                 delay: Duration(milliseconds: 500),
-                child: Text(
-                  'Count, Curate, Enjoy: The QuickTube Way',
-                  style: GoogleFonts.poppins(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.white70,
-                    letterSpacing: 0.5,
+                child: ShaderMask(
+                  shaderCallback: (bounds) => LinearGradient(
+                    colors: [Colors.blueAccent, Colors.deepPurpleAccent],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ).createShader(bounds),
+                  child: Text(
+                    'Count, Curate, Enjoy: The QuickTube Way',
+                    style: GoogleFonts.poppins(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.white,
+                      letterSpacing: 0.5,
+                    ),
                   ),
                 ),
               ),
               SizedBox(height: 30),
 
-              // Unique animated loading ring
-              Pulse(
-                child: CustomLoadingRing(),
+              // Sleek rotating "Q" with a futuristic style
+              AnimatedBuilder(
+                animation: _controller,
+                builder: (context, child) {
+                  return Transform.rotate(
+                    angle: _controller.value * 6.28,
+                    child: CustomPaint(
+                      size: Size(80, 80),
+                      painter: RevolvingQPainter(),
+                    ),
+                  );
+                },
               ),
             ],
           ),
@@ -110,63 +132,31 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 }
 
-// Custom animated loading ring with shimmer effect
-class CustomLoadingRing extends StatefulWidget {
+// Custom painter for drawing a "Q"
+class RevolvingQPainter extends CustomPainter {
   @override
-  _CustomLoadingRingState createState() => _CustomLoadingRingState();
-}
+  void paint(Canvas canvas, Size size) {
+    final Paint circlePaint = Paint()
+      ..color = Colors.blueAccent
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 8;
 
-class _CustomLoadingRingState extends State<CustomLoadingRing>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
+    final Paint tailPaint = Paint()
+      ..color = Colors.deepPurpleAccent
+      ..style = PaintingStyle.fill;
 
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      duration: Duration(seconds: 2),
-      vsync: this,
-    )..repeat(reverse: false);
+    // Draw the circle (main "Q" body)
+    canvas.drawCircle(Offset(size.width / 2, size.height / 2), size.width / 2 - 8, circlePaint);
+
+    // Draw the tail (the diagonal line of the "Q")
+    final tailPath = Path();
+    tailPath.moveTo(size.width * 0.7, size.height * 0.7);
+    tailPath.lineTo(size.width * 0.9, size.height * 0.9);
+    tailPath.lineTo(size.width * 0.75, size.height * 0.9);
+    tailPath.close();
+    canvas.drawPath(tailPath, tailPaint);
   }
 
   @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _controller,
-      builder: (context, child) {
-        return Transform.rotate(
-          angle: _controller.value * 6.28,
-          child: Container(
-            width: 70,
-            height: 70,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: Colors.white.withOpacity(0.8),
-                width: 5,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.purpleAccent.withOpacity(0.6),
-                  blurRadius: 12,
-                  spreadRadius: 4,
-                ),
-                BoxShadow(
-                  color: Colors.pinkAccent.withOpacity(0.5),
-                  blurRadius: 15,
-                  spreadRadius: 5,
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
+  bool shouldRepaint(CustomPainter oldDelegate) => false;
 }

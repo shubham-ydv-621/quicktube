@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart'; // Firebase configuration for initialization
-import 'screens/splash_screen.dart'; // SplashScreen when initializing or checking auth status
-import 'screens/home_screen.dart'; // HomeScreen after login
-import 'screens/auth_screen.dart'; // AuthScreen for login/signup
-import 'package:firebase_auth/firebase_auth.dart'; // Firebase Auth for user state
+import 'firebase_options.dart'; // Firebase configuration
+import 'screens/splash_screen.dart';
+import 'screens/home_screen.dart';
+import 'screens/auth_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,11 +18,15 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'QuickTube+',
       theme: ThemeData(
-        primarySwatch: Colors.red, // Set the primary color to red for your app
-        useMaterial3: true, // Enabling Material 3 for the latest design system
+        primarySwatch: Colors.red,
+        useMaterial3: true,
       ),
-      home: SplashWrapper(), // Start with the SplashScreen
-      debugShowCheckedModeBanner: false, // Removes the debug banner for cleaner UI
+      debugShowCheckedModeBanner: false,
+      home: SplashWrapper(),
+      routes: {
+        '/home': (context) => HomeScreen(),
+        '/auth': (context) => AuthScreen(),
+      },
     );
   }
 }
@@ -36,7 +40,6 @@ class _SplashWrapperState extends State<SplashWrapper> {
   @override
   void initState() {
     super.initState();
-    // Simulate a splash screen delay
     Future.delayed(Duration(seconds: 3), () {
       Navigator.pushReplacement(
         context,
@@ -47,7 +50,7 @@ class _SplashWrapperState extends State<SplashWrapper> {
 
   @override
   Widget build(BuildContext context) {
-    return SplashScreen(); // Display Splash Screen
+    return SplashScreen();
   }
 }
 
@@ -55,14 +58,14 @@ class AuthWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<User?>(
-      stream: FirebaseAuth.instance.authStateChanges(), // Stream listens to authentication state
+      stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return SplashScreen(); // Show splash screen while checking auth state
+          return SplashScreen();
         } else if (snapshot.hasData) {
-          return HomeScreen(); // If user is logged in, navigate to HomeScreen
+          return HomeScreen();
         } else {
-          return AuthScreen(); // If no user is logged in, show AuthScreen for login/signup
+          return AuthScreen();
         }
       },
     );

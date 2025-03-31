@@ -31,6 +31,8 @@ dependencies:
   flutter_animate: ^4.5.0
   carousel_slider: ^5.0.0
   google_sign_in: ^6.1.6
+  shared_preferences: ^2.5.3
+  vimeo_player_flutter: ^0.1.0
 
 dev_dependencies:
   flutter_test:
@@ -44,7 +46,22 @@ flutter:
     - assets/images/education.jpg
     - assets/images/comedy.jpg
     - assets/images/fitness.jpg
+    - assets/images/coding.jpg
+    - assets/images/india.jpg
+    - assets/images/travel.jpg
+    - assets/images/food.jpg
+    - assets/images/vlogs.jpg
+    - assets/images/science_space.jpg
+    - assets/images/music_dance.jpg
+    - assets/images/anime_manga.jpg
+    - assets/images/finance_business.jpg
+    - assets/images/motivation_selfhelp.jpg
+    - assets/images/sports_adventure.jpg
+    - assets/images/shortfilms_storytelling.jpg
+    - assets/images/diy_lifehacks.jpg
+    - assets/images/automobiles_gadgets.jpg
     - assets/lottie/youtube_animation.json
+
   uses-material-design: true
 
 flutter_icons:
