@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'auth_screen.dart'; // Redirects to AuthScreen
-import 'home_screen.dart'; // Import the HomeScreen
+import 'auth_screen.dart';
+import 'home_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -30,9 +30,8 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     super.dispose();
   }
 
-  // Navigate based on authentication state
   void _navigateBasedOnAuth() async {
-    await Future.delayed(Duration(seconds: 3)); // Splash delay
+    await Future.delayed(Duration(seconds: 3));
     await FirebaseAuth.instance.authStateChanges().first;
 
     User? user = FirebaseAuth.instance.currentUser;
@@ -47,7 +46,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Colors.black, Colors.grey.shade800, Colors.grey.shade900],
+            colors: [Colors.black, Colors.grey.shade900],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -56,29 +55,20 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Animated App Name with modern typography and glow effect
               Row(
                 mainAxisSize: MainAxisSize.min,
-                children: "QuickTube".split("").asMap().entries.map((entry) {
-                  int idx = entry.key;
-                  String letter = entry.value;
+                children: "QuickTube".split(" ").map((word) {
                   return BounceInDown(
-                    delay: Duration(milliseconds: idx * 100),
                     child: Text(
-                      letter,
-                      style: GoogleFonts.bebasNeue(
+                      word,
+                      style: GoogleFonts.pacifico(
                         fontSize: 60,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                         shadows: [
                           Shadow(
-                            blurRadius: 10,
-                            color: Colors.blueAccent.withOpacity(0.7),
-                            offset: Offset(0, 0),
-                          ),
-                          Shadow(
-                            blurRadius: 10,
-                            color: Colors.deepPurpleAccent.withOpacity(0.6),
+                            blurRadius: 15,
+                            color: Colors.redAccent.withOpacity(0.8),
                             offset: Offset(0, 0),
                           ),
                         ],
@@ -88,30 +78,19 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                 }).toList(),
               ),
               SizedBox(height: 10),
-
-              // Modern tagline with gradient text effect
               FadeIn(
                 delay: Duration(milliseconds: 500),
-                child: ShaderMask(
-                  shaderCallback: (bounds) => LinearGradient(
-                    colors: [Colors.blueAccent, Colors.deepPurpleAccent],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ).createShader(bounds),
-                  child: Text(
-                    'Count, Curate, Enjoy: The QuickTube Way',
-                    style: GoogleFonts.poppins(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.white,
-                      letterSpacing: 0.5,
-                    ),
+                child: Text(
+                  'Watch, Discover, Enjoy',
+                  style: GoogleFonts.poppins(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.pinkAccent,
+                    letterSpacing: 1.0,
                   ),
                 ),
               ),
               SizedBox(height: 30),
-
-              // Sleek rotating "Q" with a futuristic style
               AnimatedBuilder(
                 animation: _controller,
                 builder: (context, child) {
@@ -132,23 +111,20 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   }
 }
 
-// Custom painter for drawing a "Q"
 class RevolvingQPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final Paint circlePaint = Paint()
-      ..color = Colors.blueAccent
+      ..color = Colors.white
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 8;
+      ..strokeWidth = 6;
 
     final Paint tailPaint = Paint()
-      ..color = Colors.deepPurpleAccent
+      ..color = Colors.redAccent
       ..style = PaintingStyle.fill;
 
-    // Draw the circle (main "Q" body)
     canvas.drawCircle(Offset(size.width / 2, size.height / 2), size.width / 2 - 8, circlePaint);
 
-    // Draw the tail (the diagonal line of the "Q")
     final tailPath = Path();
     tailPath.moveTo(size.width * 0.7, size.height * 0.7);
     tailPath.lineTo(size.width * 0.9, size.height * 0.9);

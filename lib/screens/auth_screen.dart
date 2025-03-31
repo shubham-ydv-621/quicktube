@@ -16,6 +16,7 @@ class _AuthScreenState extends State<AuthScreen> {
   bool isLogin = true;
   String email = '';
   String password = '';
+  String userName = ''; // Added field for user name
   String errorMessage = '';
   bool isLoading = false;
 
@@ -28,17 +29,23 @@ class _AuthScreenState extends State<AuthScreen> {
 
     try {
       if (isLogin) {
+        // Log in existing user
         await _auth.signInWithEmailAndPassword(
           email: email.trim(),
           password: password.trim(),
         );
       } else {
-        await _auth.createUserWithEmailAndPassword(
+        // Sign up new user
+        UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
           email: email.trim(),
           password: password.trim(),
         );
+
+        // Save user name in Firebase
+        await userCredential.user!.updateDisplayName(userName.trim());
       }
 
+      // Navigate to HomeScreen
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => HomeScreen()),
@@ -123,6 +130,35 @@ class _AuthScreenState extends State<AuthScreen> {
                       ),
                     ),
                     SizedBox(height: 40),
+
+                    // User Name Input Field (only for Sign Up)
+                    if (!isLogin)
+                      FadeInDown(
+                        delay: Duration(milliseconds: 200),
+                        child: TextFormField(
+                          decoration: InputDecoration(
+                            labelText: 'User Name',
+                            filled: true,
+                            fillColor: Colors.grey[850],
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30),
+                              borderSide: BorderSide.none,
+                            ),
+                            labelStyle: TextStyle(color: Colors.white70),
+                            prefixIcon: Icon(Icons.person, color: Colors.white70),
+                          ),
+                          keyboardType: TextInputType.name,
+                          style: TextStyle(color: Colors.white),
+                          onChanged: (value) => userName = value,
+                          validator: (value) {
+                            if (value == null || value.trim().isEmpty) {
+                              return "Please enter your name.";
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                    SizedBox(height: 20),
 
                     // Email Input Field
                     FadeInDown(

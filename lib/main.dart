@@ -4,11 +4,16 @@ import 'firebase_options.dart'; // Firebase configuration
 import 'screens/splash_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/auth_screen.dart';
+import 'screens/leaderboard_screen.dart'; // Lowercase file naming for consistency
 import 'package:firebase_auth/firebase_auth.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  try {
+    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  } catch (e) {
+    print("Firebase Initialization Error: $e"); // Log initialization error
+  }
   runApp(MyApp());
 }
 
@@ -26,6 +31,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/home': (context) => HomeScreen(),
         '/auth': (context) => AuthScreen(),
+        '/leaderboard': (context) => LeaderboardScreen(), // Properly routed leaderboard
       },
     );
   }
@@ -41,16 +47,20 @@ class _SplashWrapperState extends State<SplashWrapper> {
   void initState() {
     super.initState();
     Future.delayed(Duration(seconds: 3), () {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => AuthWrapper()),
-      );
+      _navigateToNextScreen();
     });
+  }
+
+  void _navigateToNextScreen() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => AuthWrapper()),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return SplashScreen();
+    return SplashScreen(); // Displays the splash screen for 3 seconds
   }
 }
 
@@ -61,11 +71,11 @@ class AuthWrapper extends StatelessWidget {
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return SplashScreen();
-        } else if (snapshot.hasData) {
-          return HomeScreen();
+          return SplashScreen(); // While waiting, show the splash screen
+        } else if (snapshot.hasData && snapshot.data != null) {
+          return HomeScreen(); // Navigate to Home if the user is authenticated
         } else {
-          return AuthScreen();
+          return AuthScreen(); // Navigate to the Authentication screen otherwise
         }
       },
     );

@@ -43,7 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _loadScrollCount();
-    _preloadCategoryImages(); // Preloading images for smoother scrolling
+    _preloadCategoryImages();
   }
 
   Future<void> _loadScrollCount() async {
@@ -65,11 +65,65 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _preloadCategoryImages() async {
-    // Preload all category images into memory
     for (var category in allCategories) {
       await precacheImage(AssetImage(category['image']!), context);
     }
   }
+
+ void _showProfilePopup() {
+  final user = FirebaseAuth.instance.currentUser;
+
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        backgroundColor: Colors.grey[900],
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Text(
+          "Profile Info",
+          style: GoogleFonts.poppins(
+            fontWeight: FontWeight.bold,
+            fontSize: 22,
+            color: Colors.white,
+          ),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              user?.displayName ?? "Name not available", // Fetches and displays user's name
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: 10),
+            Text(
+              user?.email ?? "Email not available", // Fetches and displays user's email
+              style: TextStyle(
+                color: Colors.white70,
+                fontSize: 16,
+              ),
+            ),
+            SizedBox(height: 20),
+            TextButton(
+              onPressed: _logout,
+              child: Text(
+                "Logout",
+                style: TextStyle(
+                  color: Colors.redAccent,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    },
+  );
+}
+
 
   void _logout() async {
     await FirebaseAuth.instance.signOut();
@@ -83,27 +137,48 @@ class _HomeScreenState extends State<HomeScreen> {
     if (searchQuery.isEmpty) return items;
     return items.where((item) => item['name']!.toLowerCase().contains(searchQuery)).toList();
   }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        title: Text("QuickTube", style: GoogleFonts.bebasNeue(fontSize: 28, color: Colors.white)),
-        backgroundColor: Colors.black,
-        elevation: 0,
-        actions: [
-          IconButton(
-            icon: Icon(Icons.account_circle, color: Colors.white),
-            onPressed: _logout,
-          ),
-        ],
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    backgroundColor: Colors.black,
+    appBar: AppBar(
+        titleSpacing: 0,
+          title: Padding(
+        padding: EdgeInsets.only(left: 0),
+        child: Text(
+        "QuickTube",
+        style: GoogleFonts.bebasNeue(
+          fontSize: 36,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+          shadows: [
+            Shadow(blurRadius: 8, color: Colors.pinkAccent.withOpacity(0.8), offset: Offset(0, 2)),
+            Shadow(blurRadius: 4, color: Colors.black.withOpacity(0.5), offset: Offset(0, 3)),
+          ],
+        ),
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _sectionWithSearch("Watch Shorts that Match Your Passion"),
-          Expanded(
+          ),
+      backgroundColor: Colors.black,
+      elevation: 3, // Adding a subtle elevation for a modern layered effect
+      actions: [
+        IconButton(
+          icon: Icon(
+            Icons.account_circle,
+            color: Colors.pinkAccent, // Highlighted with pinkish-red for better contrast
+            size: 30,
+          ),
+          onPressed: _showProfilePopup,
+          tooltip: "Profile",
+        ),
+      ],
+    ),
+    body: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _sectionWithSearch("Explore, Count and Earn."), // Updated, modern tagline
+        Expanded(
+          child: AnimatedSwitcher(
+            duration: Duration(milliseconds: 300),
             child: _fullScreenCarousel(
               _categoryController,
               getFilteredItems(allCategories),
@@ -113,11 +188,12 @@ class _HomeScreenState extends State<HomeScreen> {
               categoryIndex,
             ),
           ),
-        ],
-      ),
-      bottomNavigationBar: BottomNavBar(reelsScrolledToday: reelsScrolledToday),
-    );
-  }
+        ),
+      ],
+    ),
+    bottomNavigationBar: BottomNavBar(reelsScrolledToday: reelsScrolledToday),
+  );
+}
 
   Widget _sectionWithSearch(String title) {
     return Padding(
@@ -125,7 +201,10 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: GoogleFonts.poppins(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white)),
+          Text(
+            title,
+            style: GoogleFonts.poppins(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
+          ),
           SizedBox(height: 10),
           TextField(
             onChanged: (query) => setState(() => searchQuery = query.toLowerCase()),
@@ -144,7 +223,12 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _fullScreenCarousel(PageController controller, List<Map<String, String>> items, Function(int) onPageChanged, int currentIndex) {
+  Widget _fullScreenCarousel(
+    PageController controller,
+    List<Map<String, String>> items,
+    Function(int) onPageChanged,
+    int currentIndex,
+  ) {
     return PageView.builder(
       controller: controller,
       itemCount: items.length * 1000,
@@ -170,8 +254,8 @@ class _HomeScreenState extends State<HomeScreen> {
               borderRadius: BorderRadius.circular(20),
               boxShadow: isCentered
                   ? [
-                      BoxShadow(color: Colors.white.withOpacity(0.7), blurRadius: 12, spreadRadius: 2),
-                      BoxShadow(color: Colors.grey.withOpacity(0.2), blurRadius: 20, spreadRadius: 10),
+                      BoxShadow(color: Colors.blueAccent.withOpacity(0.5), blurRadius: 12, spreadRadius: 2),
+                      BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 20, spreadRadius: 10),
                     ]
                   : [],
               border: isCentered ? Border.all(color: Colors.white, width: 3) : null,
@@ -179,9 +263,13 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             alignment: Alignment.bottomLeft,
             padding: EdgeInsets.all(16),
-            child: Text(
+                       child: Text(
               items[actualIndex]['name']!,
-              style: GoogleFonts.poppins(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+              style: GoogleFonts.poppins(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
             ),
           ),
         );
