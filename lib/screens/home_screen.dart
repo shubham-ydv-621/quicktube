@@ -13,17 +13,17 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final List<Map<String, String>> allCategories = [
+    {'name': 'Coding', 'image': 'assets/images/coding.jpg'},
+    {'name': 'Fitness', 'image': 'assets/images/fitness.jpg'},
+    {'name': 'Travel', 'image': 'assets/images/travel.jpg'},
+    {'name': 'Food', 'image': 'assets/images/food.jpg'},
+    {'name': 'India', 'image': 'assets/images/india.jpg'},
+    {'name': 'Science & Space', 'image': 'assets/images/science_space.jpg'},
     {'name': 'Tech', 'image': 'assets/images/tech.jpg'},
     {'name': 'Gaming', 'image': 'assets/images/gaming.jpg'},
     {'name': 'Education', 'image': 'assets/images/education.jpg'},
     {'name': 'Comedy', 'image': 'assets/images/comedy.jpg'},
-    {'name': 'Fitness', 'image': 'assets/images/fitness.jpg'},
-    {'name': 'Coding', 'image': 'assets/images/coding.jpg'},
-    {'name': 'India', 'image': 'assets/images/india.jpg'},
-    {'name': 'Travel', 'image': 'assets/images/travel.jpg'},
-    {'name': 'Food', 'image': 'assets/images/food.jpg'},
     {'name': 'Vlogs', 'image': 'assets/images/vlogs.jpg'},
-    {'name': 'Science & Space', 'image': 'assets/images/science_space.jpg'},
     {'name': 'Music & Dance', 'image': 'assets/images/music_dance.jpg'},
     {'name': 'Anime & Manga', 'image': 'assets/images/anime_manga.jpg'},
     {'name': 'Finance & Business', 'image': 'assets/images/finance_business.jpg'},
@@ -69,9 +69,9 @@ class _HomeScreenState extends State<HomeScreen> {
       await precacheImage(AssetImage(category['image']!), context);
     }
   }
-
- void _showProfilePopup() {
-  final user = FirebaseAuth.instance.currentUser;
+void _showProfilePopup() async {
+  User? user = FirebaseAuth.instance.currentUser;
+  await user?.reload(); // Refresh to get the latest data
 
   showDialog(
     context: context,
@@ -91,7 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              user?.displayName ?? "Name not available", // Fetches and displays user's name
+              user?.displayName ?? "Name not set",
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 18,
@@ -100,7 +100,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             SizedBox(height: 10),
             Text(
-              user?.email ?? "Email not available", // Fetches and displays user's email
+              user?.email ?? "Email not available",
               style: TextStyle(
                 color: Colors.white70,
                 fontSize: 16,
@@ -117,10 +117,75 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
+            SizedBox(height: 10),
+            TextButton(
+              onPressed: _showDeveloperInfo,
+              child: Text(
+                "About Developers",
+                style: TextStyle(
+                  color: Colors.blueAccent,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
           ],
         ),
       );
     },
+  );
+}
+
+void _showDeveloperInfo() {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        backgroundColor: Colors.grey[900],
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Text(
+          "Developers",
+          style: GoogleFonts.poppins(
+            fontWeight: FontWeight.bold,
+            fontSize: 22,
+            color: Colors.white,
+          ),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _developerEmail("Shubham Yadav", "Shubham22csu444@ncuindia.edu"),
+            _developerEmail("Tanishq", "Tanishq22csu451@ncuindia.edu"),
+            _developerEmail("Deepanshu yadav", "Deepanshu22csu476@ncuindia.edu"),
+          ],
+        ),
+      );
+    },
+  );
+}
+
+Widget _developerEmail(String name, String email) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 5),
+    child: Column(
+      children: [
+        Text(
+          name,
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Text(
+          email,
+          style: TextStyle(
+            color: Colors.white70,
+            fontSize: 16,
+          ),
+        ),
+        SizedBox(height: 10),
+      ],
+    ),
   );
 }
 

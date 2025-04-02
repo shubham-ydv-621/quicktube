@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'home_screen.dart';  // Import your HomeScreen
-  // Import Settings screen
+import 'QuickCampusScreen.dart';
+
 
 class BottomNavBar extends StatelessWidget {
   final int reelsScrolledToday;
@@ -8,24 +9,25 @@ class BottomNavBar extends StatelessWidget {
   final VoidCallback? onAutoScroll;
 
   BottomNavBar({required this.reelsScrolledToday, this.isShortsScreen = false, this.onAutoScroll});
-@override
-Widget build(BuildContext context) {
-  return Container(
-    padding: EdgeInsets.symmetric(vertical: 10),
-    color: Colors.black,
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        _footerButton(Icons.home, "Home", context, '/home'),
-        _footerButton(Icons.leaderboard, "Leaderboard", context, '/leaderboard'), // Updated
-        _counterButton(Icons.visibility, reelsScrolledToday),
-        isShortsScreen
-            ? _autoScrollButton()
-            : _footerButton(Icons.settings, "Settings", context, '/settings'),
-      ],
-    ),
-  );
-}
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 10),
+      color: Colors.black,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          _footerButton(Icons.home, "Home", context, '/home'),
+          _footerButton(Icons.leaderboard, "Leaderboard", context, '/leaderboard'),
+          _counterButton(Icons.visibility, reelsScrolledToday),
+          isShortsScreen
+              ? _autoScrollButton()
+              : _footerButton(Icons.school, "QuickCampus", context, '/quickcampus'),
+        ],
+      ),
+    );
+  }
 
   Widget _footerButton(IconData icon, String label, BuildContext context, String route) {
     return GestureDetector(

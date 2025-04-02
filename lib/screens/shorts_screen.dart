@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../models/video.dart';
 import '../services/youtube_api_service.dart';
 import '../screens/bottom_nav_bar.dart';
+import 'dart:math';
 
 class ShortsScreen extends StatefulWidget {
   final String category;
@@ -27,12 +28,13 @@ class _ShortsScreenState extends State<ShortsScreen> {
   final PageController _pageController = PageController();
   int reelsScrolledToday = 0;
   int preloadCount = 3;
+  final Random _random = Random();
 
   @override
   void initState() {
     super.initState();
     _fetchReelsScrolledCount();
-    _fetchVideos();
+    _fetchVideos(refreshFeed: true);
     _pageController.addListener(_handlePageChange);
   }
 
@@ -56,13 +58,17 @@ class _ShortsScreenState extends State<ShortsScreen> {
     }
   }
 
-  Future<void> _fetchVideos() async {
+  Future<void> _fetchVideos({bool refreshFeed = false}) async {
     if (isFetchingMore) return;
     setState(() => isFetchingMore = true);
 
     try {
-      final result = await _apiService.fetchVideos(widget.category, nextPageToken: nextPageToken);
+      final result = await _apiService.fetchVideos(widget.category, nextPageToken: refreshFeed ? "" : nextPageToken);
       List<Video> newVideos = result.videos;
+
+      if (refreshFeed) {
+        newVideos.shuffle(_random);
+      }
 
       if (newVideos.isNotEmpty) {
         List<YoutubePlayerController> newControllers = newVideos.map((video) {
@@ -83,19 +89,11 @@ class _ShortsScreenState extends State<ShortsScreen> {
 
         setState(() {
           nextPageToken = result.nextPageToken;
-          videos.addAll(newVideos);
-          _controllers.addAll(newControllers);
+          videos = refreshFeed ? newVideos : [...videos, ...newVideos];
+          _controllers = refreshFeed ? newControllers : [..._controllers, ...newControllers];
           isLoading = false;
           isFetchingMore = false;
         });
-
-        if (_controllers.isNotEmpty) {
-          Future.delayed(Duration(milliseconds: 1000), () {
-            if (mounted) {
-              _playVideoIfPaused(0);
-            }
-          });
-        }
       }
     } catch (error) {
       print("Error fetching videos: $error");
@@ -142,19 +140,6 @@ class _ShortsScreenState extends State<ShortsScreen> {
     }
   }
 
-  void _playVideoIfPaused(int index) {
-    if (index < _controllers.length) {
-      Future.delayed(Duration(milliseconds: 500), () {
-        if (mounted) {
-          var state = _controllers[index].value.playerState;
-          if (state == PlayerState.paused || state == PlayerState.unknown) {
-            _controllers[index].playVideo();
-          }
-        }
-      });
-    }
-  }
-
   void _autoScroll() {
     if (currentIndex + 1 < videos.length) {
       _pageController.animateToPage(
@@ -192,18 +177,6 @@ class _ShortsScreenState extends State<ShortsScreen> {
                         children: [
                           Positioned.fill(
                             child: YoutubePlayer(controller: _controllers[index]),
-                          ),
-                          Positioned(
-                            bottom: 40,
-                            left: 16,
-                            right: 16,
-                            child: Text(
-                              videos[index].title,
-                              style: TextStyle(color: Colors.white, fontSize: 16),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              textAlign: TextAlign.center,
-                            ),
                           ),
                         ],
                       );
